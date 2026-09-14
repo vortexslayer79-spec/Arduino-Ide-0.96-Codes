@@ -1,0 +1,104 @@
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64 
+#define OLED_RESET -1
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+void drawLoadingScreen(int barWidth) {
+  display.clearDisplay();
+  
+  // Display text "GAINING POWER"
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(24, 16);
+  display.print(F("GAINING POWER"));
+  
+  // Draw loading bar container outline
+  display.drawRect(14, 38, 100, 10, SSD1306_WHITE);
+  
+  // Fill the loading bar based on progress
+  if (barWidth > 0) {
+    display.fillRect(16, 40, barWidth, 6, SSD1306_WHITE);
+  }
+  
+  display.display();
+}
+
+void drawEyes(int topOffset, int height) {
+  display.clearDisplay();
+  display.fillRoundRect(20, topOffset, 32, height, 4, SSD1306_WHITE);
+  display.fillRoundRect(76, topOffset, 32, height, 4, SSD1306_WHITE);
+  display.display();
+}
+
+void setup() {
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    for(;;);
+  }
+  display.clearDisplay();
+
+  // --- 1. GAINING POWER & LOADING SEQUENCE ---
+  drawLoadingScreen(0);
+  delay(400);
+
+  drawLoadingScreen(24);
+  delay(500);
+
+  drawLoadingScreen(48);
+  delay(400);
+
+  drawLoadingScreen(72);
+  delay(500);
+
+  drawLoadingScreen(96);
+  delay(800);
+
+  // --- 2. WAKING UP TIRED / HEAVY-LIDDED ---
+  // Just booted up, barely opening eyes
+  drawEyes(26, 8);
+  delay(1000);
+
+  // Slowly rubbing sleep out of eyes (opening a bit more)
+  drawEyes(22, 16);
+  delay(800);
+
+  // Fully awake
+  drawEyes(16, 32);
+  delay(1000);
+}
+
+void loop() {
+  // --- 3. NORMAL ROBOT EYE ANIMATIONS ---
+  
+  // Center
+  drawEyes(16, 32);
+  delay(1500);
+  
+  // Look Right
+  display.clearDisplay();
+  display.fillRoundRect(30, 16, 32, 32, 4, SSD1306_WHITE);
+  display.fillRoundRect(86, 16, 32, 32, 4, SSD1306_WHITE);
+  display.display();
+  delay(800);
+  
+  // Look Left
+  display.clearDisplay();
+  display.fillRoundRect(10, 16, 32, 32, 4, SSD1306_WHITE);
+  display.fillRoundRect(66, 16, 32, 32, 4, SSD1306_WHITE);
+  display.display();
+  delay(800);
+  
+  // Center
+  drawEyes(16, 32);
+  delay(1000);
+  
+  // Blink
+  display.clearDisplay();
+  display.fillRoundRect(20, 30, 32, 4, 4, SSD1306_WHITE);
+  display.fillRoundRect(76, 30, 32, 4, 4, SSD1306_WHITE);
+  display.display();
+  delay(150);
+}

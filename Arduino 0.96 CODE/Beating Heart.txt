@@ -1,0 +1,51 @@
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64 
+#define OLED_RESET -1
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+void drawHeart(int size) {
+  display.clearDisplay();
+  
+  if (size == 1) {
+    // Medium-Large Heart
+    display.fillCircle(49, 26, 11, SSD1306_WHITE);
+    display.fillCircle(79, 26, 11, SSD1306_WHITE);
+    display.fillTriangle(38, 32, 90, 32, 64, 58, SSD1306_WHITE);
+  } else {
+    // Maximum Size Heart (Filling most of the 128x64 screen)
+    display.fillCircle(45, 24, 15, SSD1306_WHITE);
+    display.fillCircle(83, 24, 15, SSD1306_WHITE);
+    display.fillTriangle(30, 32, 98, 32, 64, 62, SSD1306_WHITE);
+  }
+  
+  display.display();
+}
+
+void setup() {
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    for(;;);
+  }
+  display.clearDisplay();
+}
+
+void loop() {
+  // First beat (Lub) - Giant size
+  drawHeart(2);
+  delay(120);
+  
+  // Relax - Medium-Large size
+  drawHeart(1);
+  delay(80);
+
+  // Second beat (Dub) - Giant size
+  drawHeart(2);
+  delay(120);
+
+  // Rest between heartbeats
+  drawHeart(1);
+  delay(600);
+}
